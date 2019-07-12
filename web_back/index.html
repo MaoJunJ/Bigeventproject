@@ -61,7 +61,32 @@
 
     <script>
 
-        
+        $(function () {
+
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/getuser',
+                success: function (res) {
+                    console.log(res);
+                    $('.user_info').children('span').html('欢迎&nbsp;&nbsp;' + res.data.nickname);
+                    $('.user_info').children('img').attr('src', res.data.user_pic);
+                    $('.user_center_link').children('img').attr('src', res.data.user_pic);
+                }
+            })
+
+            $('.user_center_link').children('a:last-child').on('click', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/logout',
+                    success: function (res) {
+                        console.log(res);
+                        location.href = 'login.html';
+                    }
+                })
+            })
+
+        })
 
     </script>
 

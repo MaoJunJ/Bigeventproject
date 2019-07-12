@@ -97,7 +97,7 @@
             $('.input_sub').on('click', function (e) {
                 e.preventDefault();
                 if ($('.input_txt').val() == '' || $('.input_pass').val() == '') {
-                    alertbox('> 请输入完整的账号和密码 <');
+                    alertbox('提示：请输入完整！');
                     return;
                 }
                 // 调用接口
@@ -113,7 +113,7 @@
                         if (res.code == 200) {
                             location.href = 'index.html';
                         } else {
-                            alertbox('> 错误 请重新输入 <');
+                            alertbox(res.msg);
                             $('.input_txt').val('');
                             $('.input_pass').val('');
                         }
