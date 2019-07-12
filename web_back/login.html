@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>大事件-后台登录页</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/iconfont.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style>
+        .unitone,
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            position: relative;
+        }
+
+        .unitone>.alertbox {
+            width: 300px;
+            height: 100px;
+            background-color: #3c97c3;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 5px 5px 10px 0px #ccc;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+        }
+
+        .alertbox>p {
+            letter-spacing: 2px;
+            line-height: 100px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .conceal {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 弹窗界面 -->
+    <div class="unitone conceal">
+        <div class="alertbox">
+            <p></p>
+        </div>
+    </div>
+
+    <div class="main_wrap">
+
+        <div class="header">
+            <a href="#" class="logo"><img src="images/logo.png" alt=""></a>
+            <div class="copyright">CopyRight © 2019 深圳百秀信息技术股份有限公司<br>All Rights Reserved</div>
+        </div>
+
+        <div class="login_form_con">
+
+            <div class="login_title"></div>
+
+            <form class="login_form">
+                <i class="iconfont icon-user"></i>
+                <i class="iconfont icon-key"></i>
+                <input type="text" class="input_txt" placeholder="邮箱/手机号">
+                <input type="password" class="input_pass" placeholder="密码">
+                <input type="submit" class="input_sub" value="登 录">
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="./js/jquery-1.12.4.min.js"></script>
+
+    <script>
+
+        // 入口函数
+        $(function () {
+
+            function alertbox(a) {
+                $('.alertbox').children('p').html(a);
+                $('.unitone').fadeIn().click(function () {
+                    $(this).fadeOut();
+                });
+            }
+
+            // 登录按钮的点击事件
+            $('.input_sub').on('click', function (e) {
+                e.preventDefault();
+                if ($('.input_txt').val() == '' || $('.input_pass').val() == '') {
+                    alertbox('> 请输入完整的账号和密码 <');
+                    return;
+                }
+                // 调用接口
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/login',
+                    data: {
+                        user_name: $('.input_txt').val().trim(),
+                        password: $('.input_pass').val().trim(),
+                    },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            location.href = 'index.html';
+                        } else {
+                            alertbox('> 错误 请重新输入 <');
+                            $('.input_txt').val('');
+                            $('.input_pass').val('');
+                        }
+                    },
+                })
+            });
+        })
+
+    </script>
+
+</body>
+
+</html>
