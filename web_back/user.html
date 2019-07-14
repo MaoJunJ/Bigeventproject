@@ -77,19 +77,23 @@
         $(function () {
 
             // 导入用户信息
-            $.ajax({
-                type: 'get',
-                url: 'http://localhost:8000/admin/userinfo_get',
-                success: function (res) {
-                    console.log(res);
-                    if (res.code == 200) {
-                        $('.user_pic').attr('src', res.data.user_pic);
-                        for (var key in res.data) {
-                            $('.' + key).val(res.data[key]);
+            function news() {
+                $.ajax({
+                    type: 'get',
+                    url: 'http://localhost:8000/admin/userinfo_get',
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            $('.user_pic').attr('src', res.data.user_pic);
+                            for (var key in res.data) {
+                                $('.' + key).val(res.data[key]);
+                            };
                         };
-                    };
-                }
-            })
+                    }
+                })
+            }
+
+            news();
 
             // 头像上传预览
             $('#exampleInputFile').on('change', function () {
@@ -113,7 +117,21 @@
                     success: function (res) {
                         console.log(res);
                         if (res.code == 200) {
-                            parent.location.href='index.html';
+                            // parent.location.href='index.html';
+
+                            // 在当前页面跳转
+                            $.ajax({
+                                type: 'get',
+                                url: 'http://localhost:8000/admin/getuser',
+                                success: function (res) {
+                                    console.log(res);
+                                    if (res.code == 200) {
+                                        parent.$('.user_info').children('span').html('欢迎&nbsp;&nbsp;' + res.data.nickname);
+                                        parent.$('.user_info').children('img').attr('src', res.data.user_pic);
+                                        parent.$('.user_center_link').children('img').attr('src', res.data.user_pic);
+                                    }
+                                }
+                            })
                         }
                     }
                 })
