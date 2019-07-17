@@ -280,13 +280,13 @@
                     <h4 class="modal-title">提示 Warning！</h4>
                 </div>
                 <div class="modal-body">
-                    <p>填写的内容</p>
+                    <p>确认删除吗？</p>
                 </div>
 
-                <!-- <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div> -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
 
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -315,7 +315,7 @@
             <td class="text-center">{{v.date}}</td>
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
-                <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                <a href="article_edit.html?{{v.id}}" class="btn btn-default btn-xs">编辑</a>
                 <a href="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
             </td>
 
@@ -387,12 +387,13 @@
                             var tempss = template('news', res);
                             $('tbody').html(tempss);
                         }
+
                         var totalPages = res.totalPage; //获取新的总的页数
+                        window.currentPage = $pagination.twbsPagination('getCurrentPage'); //获取当前页
+
                         // 判断
                         if (pages != totalPages) {//如果现在获取的新的页码数,不等于当前的总的页码数,那就要重绘.
                             pages = totalPages; //把获取的新的总的页数,赋值给我们声明的变量(代表总页数)
-
-                            var currentPage = $pagination.twbsPagination('getCurrentPage'); //获取当前页
 
                             $pagination.twbsPagination('destroy');
                             $pagination.twbsPagination($.extend({}, defaultOpts, {
@@ -410,34 +411,51 @@
                 selCategorys = $('#selCategory').val();
                 selStatuss = $('#selStatus').val();
                 lookme(1, selCategorys, selStatuss);
+                $('.first').trigger('click');
             })
 
-            // 一进入页面调用此点击事件
+            // 一进入页面调用此点击事件(因为调用了框架会刷新，所以隐藏)
             // $('#btnSearch').trigger('click');
 
             // 文章的删除
             $('tbody').on('click', '.btn-danger', function (e) {
                 e.preventDefault();
+                window.that = $(this);
                 console.log($(this).attr('href').trim());
+                $('.modal-footer').css({
+                    display: 'block',
+                });
+                $('#myModal').modal('show').find('.modal-body').children().html(res.msg);
+            })
+
+            // 模态框的确认事件
+            $('.btn-primary').on('click', function (e) {
+                e.preventDefault();
                 $.ajax({
                     type: 'get',
                     url: 'http://localhost:8000/admin/article_delete',
                     data: {
-                        id: $(this).attr('href').trim(),
+                        id: that.attr('href').trim(),
                     },
                     success: function (res) {
                         console.log(res);
                         if (res.code == 200) {
-                            $('#myModal').modal(keyboard = true).find('.modal-body').children().html(res.msg);
-                            location.reload();
+                            $('.modal-footer').css({
+                                display: 'none',
+                            });
+                            $('#myModal').modal('show').find('.modal-body').children().html(res.msg);
+                            lookme(currentPage, selCategorys, selStatuss);
                         } else {
-                            $('#myModal').modal(keyboard = true).find('.modal-body').children().html(res.msg);
+                            $('.modal-footer').css({
+                                display: 'none',
+                            });
+                            $('#myModal').modal('show').find('.modal-body').children().html(res.msg);
                         }
                     }
                 })
             })
 
-            
+
 
         })
 
