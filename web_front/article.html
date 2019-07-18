@@ -205,6 +205,57 @@
         <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
 
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script src="./js/jquery.pagination.min.js"></script>
+
+    <script id="temp" type="text/html">
+
+           {{author}} 发布于 {{date}}&nbsp;&nbsp;&nbsp;分类: <span id="news"></span>&nbsp;&nbsp;&nbsp;阅读: ({{read}})&nbsp;&nbsp;&nbsp;评论: ({{id}})
+
+    </script>
+
+    <script>
+
+        $(function () {
+            var ids = location.search.split('?')[1];
+            console.log(ids);
+
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/search',
+                data: {
+                    id: ids,
+                },
+                success: function (res) {
+                    console.log(res);
+                    $('.article_title').html(res.data.title);
+                    $('.article_con').html(res.data.content);
+                    var temps = template('temp', res.data);
+                    $('.article_info').html(temps);
+                    window.types = res.data.type;
+                }
+            })
+
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8000/admin/category_search',
+                success: function (res) {
+                    console.log(res);
+                    console.log(types);
+                    var obj = res.data.find(function (x) {
+                        return x.id == types;
+                    })
+                    console.log(obj);
+                    console.log(obj.name);
+                    $('#news').html(obj.name);
+                }
+            })
+
+        })
+
+    </script>
+
 </body>
 
 </html>
